@@ -67,7 +67,16 @@ export const StoreProvider = ({ children }) => {
   const [reviews, setReviews] = useState(() => {
     try {
       const saved = localStorage.getItem('wazum_reviews');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length >= 6) {
+          // Sync default Pakistani avatars if matching initial IDs
+          return parsed.map(r => {
+            const match = initialReviews.find(ir => ir.id === r.id);
+            return match ? { ...r, avatar: match.avatar } : r;
+          });
+        }
+      }
     } catch (e) {}
     return initialReviews;
   });
