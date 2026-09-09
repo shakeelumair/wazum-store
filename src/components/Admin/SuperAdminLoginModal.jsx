@@ -113,13 +113,6 @@ const SuperAdminLoginModal = () => {
             </div>
           </div>
 
-          {/* Master Hint Box */}
-          <div className="bg-[#161825] border border-[#c5a059]/30 p-3.5 rounded-xl text-[11px] text-gray-300 space-y-1">
-            <p className="text-[#e5c158] font-bold">🔑 Master Super Admin Credentials:</p>
-            <p>ID: <code className="text-white font-mono bg-black/60 px-1.5 py-0.5 rounded">superadmin</code></p>
-            <p>Password: <code className="text-white font-mono bg-black/60 px-1.5 py-0.5 rounded">{superAdminAuth?.password || 'superwazum2026'}</code></p>
-          </div>
-
           {/* Submit Button */}
           <button
             type="submit"

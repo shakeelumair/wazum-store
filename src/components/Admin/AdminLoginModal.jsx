@@ -121,11 +121,6 @@ const AdminLoginModal = () => {
             </div>
           </div>
 
-          {/* Initial Demo Hint */}
-          <div className="bg-[#181a2a] border border-[#c5a059]/20 p-3 rounded-xl text-[11px] text-gray-400">
-            <span className="text-[#e5c158] font-bold">Default Credentials:</span> ID: <code className="text-white font-mono bg-black/50 px-1 py-0.5 rounded">admin</code> | Password: <code className="text-white font-mono bg-black/50 px-1 py-0.5 rounded">{adminAuth?.password || 'admin123'}</code>
-          </div>
-
           {/* Submit Button */}
           <button
             type="submit"
