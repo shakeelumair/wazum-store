@@ -3,6 +3,7 @@ import { useStore } from '../context/StoreContext';
 import { Layers, ArrowRight } from 'lucide-react';
 import ShopTheLookSlider from './ShopTheLookSlider';
 import ComboOffers from './ComboOffers';
+import CustomerReviews from './CustomerReviews';
 
 const CategoryGrid = () => {
   const { categories, selectedCategory, openCategoryPage, products, siteConfig } = useStore();
@@ -35,7 +36,7 @@ const CategoryGrid = () => {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3.5 sm:gap-6 md:gap-10">
               {categories.map((cat) => {
                 const isSelected = selectedCategory === cat.name;
-                const count = products.filter(p => p.category === cat.name).length;
+                const count = products.filter(p => p.category && p.category.trim().toLowerCase() === cat.name.trim().toLowerCase()).length;
 
                 return (
                   <div
@@ -105,6 +106,9 @@ const CategoryGrid = () => {
 
       {/* Combo Offers Section */}
       {showCombos && <ComboOffers />}
+
+      {/* Customer Reviews Section */}
+      <CustomerReviews />
     </section>
   );
 };

@@ -53,6 +53,12 @@ const Footer = () => {
           >
             <span>📦 Track Order</span>
           </button>
+          <button 
+            onClick={() => setCurrentView('admin')} 
+            className="text-gray-300 hover:text-[#e5c158] transition-colors cursor-pointer uppercase font-light flex items-center space-x-1"
+          >
+            <span>🔒 Admin Panel</span>
+          </button>
         </div>
 
         {/* Customer Support Contact Badges */}
@@ -153,10 +159,17 @@ const Footer = () => {
         {/* Divider */}
         <div className="w-24 h-[1px] bg-[#c5a059]/30"></div>
 
-        {/* Copyright */}
-        <p className="text-[11px] font-extralight text-gray-400 tracking-widest uppercase">
-          {siteConfig?.footerCopyright || '© 2026 WAZUM LUXURY STORE. ALL RIGHTS RESERVED.'}
-        </p>
+        {/* Copyright & Admin Link */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-[11px] font-extralight text-gray-400 tracking-widest uppercase">
+          <span>{siteConfig?.footerCopyright || '© 2026 WAZUM LUXURY STORE. ALL RIGHTS RESERVED.'}</span>
+          <span className="hidden sm:inline text-gray-600">|</span>
+          <button 
+            onClick={() => setCurrentView('admin')} 
+            className="text-[#c5a059] hover:text-white hover:underline transition-colors cursor-pointer font-medium"
+          >
+            🔒 Admin Portal
+          </button>
+        </div>
 
       </div>
     </footer>

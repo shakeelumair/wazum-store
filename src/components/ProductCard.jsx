@@ -1,6 +1,6 @@
 import React from 'react';
 import { useStore } from '../context/StoreContext';
-import { Eye, ArrowRight } from 'lucide-react';
+import { Eye, ArrowRight, Star } from 'lucide-react';
 
 const ProductCard = ({ product }) => {
   const { setSelectedProduct } = useStore();
@@ -26,6 +26,12 @@ const ProductCard = ({ product }) => {
         {/* Category Tag */}
         <span className="absolute top-2 left-2 bg-black/80 text-[#e5c158] border border-[#c5a059]/40 text-[8px] md:text-[10px] uppercase font-light tracking-wider px-2 py-0.5 rounded">
           {product.category}
+        </span>
+
+        {/* Rating Badge */}
+        <span className="absolute top-2 right-2 bg-black/85 text-amber-400 border border-amber-400/40 text-[9px] md:text-[10px] font-bold tracking-wider px-2 py-0.5 rounded flex items-center space-x-1 shadow">
+          <Star size={10} fill="currentColor" />
+          <span>5.0</span>
         </span>
 
         {/* Desktop Quick Actions Hover */}

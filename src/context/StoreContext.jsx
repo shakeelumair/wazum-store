@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { initialCategories, initialProducts, initialLookVideos, initialComboOffers } from '../data/initialData';
+import { initialCategories, initialProducts, initialLookVideos, initialComboOffers, initialReviews } from '../data/initialData';
 
 const StoreContext = createContext();
 
@@ -9,56 +9,85 @@ export const StoreProvider = ({ children }) => {
 
   // Categories State
   const [categories, setCategories] = useState(() => {
-    const saved = localStorage.getItem('wazum_categories');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (parsed.some(c => oldCategoryNames.includes(c.name)) || parsed.some(c => c.itemCount !== 8)) {
-        localStorage.setItem('wazum_categories', JSON.stringify(initialCategories));
-        return initialCategories;
+    try {
+      const saved = localStorage.getItem('wazum_categories');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length >= 6 && !parsed.some(c => oldCategoryNames.includes(c.name))) {
+          return parsed;
+        }
       }
-      return parsed;
+    } catch (err) {
+      console.warn('Error reading categories from localStorage:', err);
     }
-    localStorage.setItem('wazum_categories', JSON.stringify(initialCategories));
+    try {
+      localStorage.setItem('wazum_categories', JSON.stringify(initialCategories));
+    } catch (e) {}
     return initialCategories;
   });
 
   // Products State
   const [products, setProducts] = useState(() => {
-    const saved = localStorage.getItem('wazum_products');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (parsed.some(p => oldCategoryNames.includes(p.category)) || parsed.length < 48) {
-        localStorage.setItem('wazum_products', JSON.stringify(initialProducts));
-        return initialProducts;
+    try {
+      const saved = localStorage.getItem('wazum_products');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length >= 48 && !parsed.some(p => oldCategoryNames.includes(p.category))) {
+          return parsed;
+        }
       }
-      return parsed;
+    } catch (err) {
+      console.warn('Error reading products from localStorage:', err);
     }
-    localStorage.setItem('wazum_products', JSON.stringify(initialProducts));
+    try {
+      localStorage.setItem('wazum_products', JSON.stringify(initialProducts));
+    } catch (e) {}
     return initialProducts;
   });
 
   // Look Videos State
   const [lookVideos, setLookVideos] = useState(() => {
-    const saved = localStorage.getItem('wazum_look_videos');
-    return saved ? JSON.parse(saved) : initialLookVideos;
+    try {
+      const saved = localStorage.getItem('wazum_look_videos');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return initialLookVideos;
   });
 
   // Combo Offers State
   const [comboOffers, setComboOffers] = useState(() => {
-    const saved = localStorage.getItem('wazum_combo_offers');
-    return saved ? JSON.parse(saved) : initialComboOffers;
+    try {
+      const saved = localStorage.getItem('wazum_combo_offers');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return initialComboOffers;
+  });
+
+  // Customer Reviews State
+  const [reviews, setReviews] = useState(() => {
+    try {
+      const saved = localStorage.getItem('wazum_reviews');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return initialReviews;
   });
 
   // Cart State
   const [cart, setCart] = useState(() => {
-    const saved = localStorage.getItem('wazum_cart');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('wazum_cart');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return [];
   });
 
   // Orders State
   const [orders, setOrders] = useState(() => {
-    const saved = localStorage.getItem('wazum_orders');
-    return saved ? JSON.parse(saved) : [];
+    try {
+      const saved = localStorage.getItem('wazum_orders');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return [];
   });
 
   // View state: 'store' or 'admin'
@@ -78,14 +107,19 @@ export const StoreProvider = ({ children }) => {
   };
 
   const [paymentSettings, setPaymentSettings] = useState(() => {
-    const saved = localStorage.getItem('wazum_payment_settings');
-    return saved ? { ...defaultPaymentSettings, ...JSON.parse(saved) } : defaultPaymentSettings;
+    try {
+      const saved = localStorage.getItem('wazum_payment_settings');
+      if (saved) return { ...defaultPaymentSettings, ...JSON.parse(saved) };
+    } catch (e) {}
+    return defaultPaymentSettings;
   });
 
   const updatePaymentSettings = (newSettings) => {
     const updated = { ...paymentSettings, ...newSettings };
     setPaymentSettings(updated);
-    localStorage.setItem('wazum_payment_settings', JSON.stringify(updated));
+    try {
+      localStorage.setItem('wazum_payment_settings', JSON.stringify(updated));
+    } catch (e) {}
   };
 
   // Admin Security / Auth State
@@ -95,24 +129,35 @@ export const StoreProvider = ({ children }) => {
   };
 
   const [adminAuth, setAdminAuth] = useState(() => {
-    const saved = localStorage.getItem('wazum_admin_credentials');
-    return saved ? { ...defaultAdminAuth, ...JSON.parse(saved) } : defaultAdminAuth;
+    try {
+      const saved = localStorage.getItem('wazum_admin_credentials');
+      if (saved) return { ...defaultAdminAuth, ...JSON.parse(saved) };
+    } catch (e) {}
+    return defaultAdminAuth;
   });
 
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(() => {
-    return localStorage.getItem('wazum_is_admin_logged_in') === 'true';
+    try {
+      return localStorage.getItem('wazum_is_admin_logged_in') === 'true';
+    } catch (e) {
+      return false;
+    }
   });
 
   const updateAdminAuth = (newAuth) => {
     const updated = { ...adminAuth, ...newAuth };
     setAdminAuth(updated);
-    localStorage.setItem('wazum_admin_credentials', JSON.stringify(updated));
+    try {
+      localStorage.setItem('wazum_admin_credentials', JSON.stringify(updated));
+    } catch (e) {}
   };
 
   const loginAdmin = (inputUser, inputPass) => {
     if (inputUser.trim() === adminAuth.username && inputPass === adminAuth.password) {
       setIsAdminAuthenticated(true);
-      localStorage.setItem('wazum_is_admin_logged_in', 'true');
+      try {
+        localStorage.setItem('wazum_is_admin_logged_in', 'true');
+      } catch (e) {}
       return { success: true };
     }
     return { success: false, error: 'Invalid Admin Username or Password! Please try again.' };
@@ -120,7 +165,9 @@ export const StoreProvider = ({ children }) => {
 
   const logoutAdmin = () => {
     setIsAdminAuthenticated(false);
-    localStorage.removeItem('wazum_is_admin_logged_in');
+    try {
+      localStorage.removeItem('wazum_is_admin_logged_in');
+    } catch (e) {}
     setCurrentView('store');
   };
 
@@ -134,9 +181,9 @@ export const StoreProvider = ({ children }) => {
     announcementText: 'Easy exchange policy | Free shipping on orders above Rs. 10,000 | 300 dc advance required to confirm your order',
     
     showHero: true,
-    heroTagline: 'LUXURY DEFINED',
-    heroTitle: 'EXCLUSIVITY IN EVERY TICK',
-    heroSubtitle: 'Explore handcrafted chronographs, automatic tourbillons, and elite vault timepieces.',
+    heroTagline: '',
+    heroTitle: 'Refined Presence',
+    heroSubtitle: '',
     heroCtaText: 'DISCOVER COLLECTION',
     heroImageUrl: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1920&q=80',
     
@@ -162,15 +209,18 @@ export const StoreProvider = ({ children }) => {
   };
 
   const [siteConfig, setSiteConfig] = useState(() => {
-    const saved = localStorage.getItem('wazum_site_config');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (!parsed.announcementText || parsed.announcementText.split('|').length < 3) {
-        parsed.announcementText = defaultSiteConfig.announcementText;
-        localStorage.setItem('wazum_site_config', JSON.stringify(parsed));
+    try {
+      const saved = localStorage.getItem('wazum_site_config');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        parsed.showHero = parsed.showHero !== false;
+        parsed.showCategoriesGrid = parsed.showCategoriesGrid !== false;
+        if (!parsed.announcementText || parsed.announcementText.split('|').length < 3) {
+          parsed.announcementText = defaultSiteConfig.announcementText;
+        }
+        return { ...defaultSiteConfig, ...parsed };
       }
-      return { ...defaultSiteConfig, ...parsed };
-    }
+    } catch (e) {}
     return defaultSiteConfig;
   });
 
@@ -249,6 +299,24 @@ export const StoreProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('wazum_orders', JSON.stringify(orders));
   }, [orders]);
+
+  useEffect(() => {
+    localStorage.setItem('wazum_reviews', JSON.stringify(reviews));
+  }, [reviews]);
+
+  const addReview = (reviewData) => {
+    const newRev = {
+      id: `rev-${Date.now()}`,
+      verified: true,
+      date: 'Just now',
+      ...reviewData
+    };
+    setReviews(prev => [newRev, ...prev]);
+  };
+
+  const deleteReview = (reviewId) => {
+    setReviews(prev => prev.filter(r => r.id !== reviewId));
+  };
 
   // Look Video helper functions
   const addLookVideo = (newLook) => {
@@ -465,6 +533,10 @@ export const StoreProvider = ({ children }) => {
       addComboOffer,
       updateComboOffer,
       deleteComboOffer,
+      reviews,
+      setReviews,
+      addReview,
+      deleteReview,
       placeOrder,
       updateOrderStatus,
       deleteOrder,

@@ -669,3 +669,78 @@ export const initialComboOffers = [
     description: 'The ultimate dual-lifestyle package combining mechanical 300M sports steel with high-definition AMOLED luxury smartwatch.'
   }
 ];
+
+export const initialReviews = [
+  {
+    id: 'rev-1',
+    name: 'Syed Shahzaib',
+    city: 'Lahore',
+    rating: 5,
+    date: '2 days ago',
+    verified: true,
+    productName: 'Royal Oak Black & Gold Chronograph',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+    watchImage: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=400&q=80',
+    review: 'Bhai parcel receive ho gya ha! Quality is next level 🔥 Packing buhut premium thi aur watch ka weight aur finishing original jaisi ha. Pehle thora darr lag rha tha lekin parcel open kr ke dil khush ho gya. 100% Recommended!'
+  },
+  {
+    id: 'rev-2',
+    name: 'Usman Chaudhry',
+    city: 'Islamabad',
+    rating: 5,
+    date: '3 days ago',
+    verified: true,
+    productName: 'Skeleton Open-Heart Automatic',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
+    watchImage: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=400&q=80',
+    review: 'Amazing automatic tourbillon movement! Sapphire glass finish is scratch-proof and power reserve works flawlessly. WhatsApp customer support was super responsive.'
+  },
+  {
+    id: 'rev-3',
+    name: 'Mirza Hamza',
+    city: 'Karachi',
+    rating: 5,
+    date: '4 days ago',
+    verified: true,
+    productName: 'Noir Slim Minimalist Leather',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80',
+    watchImage: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=400&q=80',
+    review: 'Minimalist sleek design with genuine Italian leather strap. Delivery was super fast within 48 hours to Karachi. Premium velvet box packaging!'
+  },
+  {
+    id: 'rev-4',
+    name: 'Bilal Tariq',
+    city: 'Rawalpindi',
+    rating: 5,
+    date: '5 days ago',
+    verified: true,
+    productName: 'Oceanic Submariner 300M Diver',
+    avatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=200&q=80',
+    watchImage: 'https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&w=400&q=80',
+    review: 'Heavy solid 316L stainless steel bracelet and ceramic rotating bezel action is super smooth. Looks 10x more expensive than the price!'
+  },
+  {
+    id: 'rev-5',
+    name: 'Fahad Sheikh',
+    city: 'Multan',
+    rating: 5,
+    date: '1 week ago',
+    verified: true,
+    productName: 'Smart Horizon AMOLED Gold Edition',
+    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80',
+    watchImage: 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=400&q=80',
+    review: 'Retina AMOLED screen display is crystal clear and battery backup lasts more than a week. Bluetooth calling and watch faces work smoothly.'
+  },
+  {
+    id: 'rev-6',
+    name: 'Rashid Khan',
+    city: 'Peshawar',
+    rating: 5,
+    date: '1 week ago',
+    verified: true,
+    productName: 'His & Hers Royal Gold Duo Pair',
+    avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80',
+    watchImage: 'https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=400&q=80',
+    review: 'Gifted this combo set to my brother on his wedding. Presentation box and gold plating shine was outstanding. Worth every rupee!'
+  }
+];

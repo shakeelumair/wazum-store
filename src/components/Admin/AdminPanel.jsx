@@ -5,7 +5,7 @@ import {
   BarChart3, Image as ImageIcon, Check, ArrowLeft, X, Film, Upload, Video,
   Search, Eye, TrendingUp, Sparkles, Clock, Phone, Mail, ExternalLink,
   Grid, List, ShieldCheck, AlertCircle, Filter, DollarSign, CheckCircle2, RefreshCw, Tag,
-  GripVertical, ArrowUp, ArrowDown, Settings, CreditCard, Save, Lock, LogOut
+  GripVertical, ArrowUp, ArrowDown, Settings, CreditCard, Save, Lock, LogOut, Star, MessageSquare
 } from 'lucide-react';
 
 const AdminPanel = () => {
@@ -15,6 +15,9 @@ const AdminPanel = () => {
     orders,
     lookVideos,
     comboOffers,
+    reviews,
+    addReview,
+    deleteReview,
     adminTab,
     setAdminTab,
     setCurrentView,
@@ -410,51 +413,50 @@ const AdminPanel = () => {
       )}
 
       {/* Top Luxury Admin Header */}
-      <header className="sticky top-0 z-40 bg-[#0d0e15]/95 backdrop-blur-md border-b border-[#c5a059]/25 shadow-[0_4px_25px_rgba(0,0,0,0.7)] px-4 md:px-8 py-3.5 flex justify-between items-center">
-        <div className="flex items-center space-x-4">
+      <header className="sticky top-0 z-40 bg-[#0d0e15]/95 backdrop-blur-md border-b border-[#c5a059]/25 shadow-[0_4px_25px_rgba(0,0,0,0.7)] px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-2">
+        <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
           <button 
             onClick={() => setCurrentView('store')}
-            className="p-2 rounded-xl bg-[#171924] border border-gray-800 text-gray-300 hover:text-white hover:border-[#c5a059] hover:bg-black transition-all flex items-center space-x-1.5 shadow"
+            className="p-1.5 sm:p-2 rounded-xl bg-[#171924] border border-gray-800 text-gray-300 hover:text-white hover:border-[#c5a059] hover:bg-black transition-all flex items-center space-x-1 shadow shrink-0 cursor-pointer"
             title="Return to Storefront"
           >
-            <ArrowLeft size={18} className="text-[#c5a059]" />
-            <span className="hidden sm:inline text-xs uppercase tracking-wider font-medium">Storefront</span>
+            <ArrowLeft size={16} className="text-[#c5a059]" />
+            <span className="hidden sm:inline text-xs uppercase tracking-wider font-medium">Store</span>
           </button>
           
-          <div>
-            <div className="flex items-center space-x-2">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <h1 className="text-sm md:text-lg font-bold tracking-widest uppercase bg-gradient-to-r from-white via-[#f3e7c4] to-[#c5a059] bg-clip-text text-transparent">
+          <div className="min-w-0">
+            <div className="flex items-center space-x-1.5">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shrink-0"></span>
+              <h1 className="text-xs sm:text-base md:text-lg font-bold tracking-wider sm:tracking-widest uppercase bg-gradient-to-r from-white via-[#f3e7c4] to-[#c5a059] bg-clip-text text-transparent truncate">
                 WAZUM COMMAND CENTER
               </h1>
             </div>
-            <p className="text-[10px] text-gray-400 tracking-wider">PREMIUM STORE MANAGEMENT & CONTROL PANEL</p>
+            <p className="text-[9px] sm:text-[10px] text-gray-400 tracking-wider truncate hidden sm:block">PREMIUM STORE MANAGEMENT & CONTROL PANEL</p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-3">
-          <div className="hidden lg:flex items-center space-x-2 bg-[#141622] border border-[#c5a059]/30 px-3.5 py-1.5 rounded-full text-xs text-gray-300">
+        <div className="flex items-center space-x-1.5 sm:space-x-3 shrink-0">
+          <div className="hidden lg:flex items-center space-x-1.5 bg-[#141622] border border-[#c5a059]/30 px-3 py-1 rounded-full text-xs text-gray-300">
             <ShieldCheck size={14} className="text-[#c5a059]" />
             <span>Admin Status: <strong className="text-emerald-400 uppercase font-semibold">Authorized</strong></span>
           </div>
 
           <button 
             onClick={() => setCurrentView('store')}
-            className="bg-gradient-to-r from-[#c5a059] to-[#e5c158] text-black font-semibold text-xs px-4 py-2.5 rounded-xl uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-[#c5a059]/20 flex items-center space-x-1.5 cursor-pointer"
+            className="bg-gradient-to-r from-[#c5a059] to-[#e5c158] text-black font-semibold text-[10px] sm:text-xs px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl uppercase tracking-wider sm:tracking-widest hover:brightness-110 transition-all shadow-md flex items-center space-x-1 cursor-pointer whitespace-nowrap"
           >
-            <Eye size={15} />
-            <span>View Live Store</span>
+            <Eye size={13} />
+            <span className="hidden sm:inline">View Live Store</span>
+            <span className="sm:hidden">Store</span>
           </button>
 
           <button 
-            onClick={() => {
-              logoutAdmin();
-            }}
-            className="bg-red-950/80 hover:bg-red-900 border border-red-600/50 text-red-200 font-semibold text-xs px-3.5 py-2.5 rounded-xl uppercase tracking-widest transition-all shadow flex items-center space-x-1.5 cursor-pointer"
+            onClick={() => logoutAdmin()}
+            className="bg-red-950/80 hover:bg-red-900 border border-red-600/50 text-red-200 font-semibold text-[10px] sm:text-xs px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-lg sm:rounded-xl uppercase tracking-wider sm:tracking-widest transition-all shadow flex items-center space-x-1 cursor-pointer whitespace-nowrap"
             title="Log Out Admin Session"
           >
-            <LogOut size={15} />
-            <span className="hidden sm:inline">Logout</span>
+            <LogOut size={13} />
+            <span>Logout</span>
           </button>
         </div>
       </header>
@@ -539,6 +541,18 @@ const AdminPanel = () => {
                 {pendingOrdersCount} NEW
               </span>
             )}
+          </button>
+
+          <button
+            onClick={() => setAdminTab('reviews')}
+            className={`px-4 sm:px-5 py-3 rounded-xl text-xs sm:text-sm font-semibold flex items-center space-x-2.5 transition-all whitespace-nowrap ${
+              adminTab === 'reviews'
+                ? 'bg-gradient-to-r from-[#c5a059] to-[#b8952b] text-black shadow-lg shadow-[#c5a059]/25 font-bold'
+                : 'text-gray-400 hover:text-white hover:bg-[#1a1d2d]'
+            }`}
+          >
+            <MessageSquare size={17} />
+            <span>Customer Reviews ({reviews?.length || 0})</span>
           </button>
 
           <button
@@ -2041,7 +2055,68 @@ const AdminPanel = () => {
                 ))}
               </div>
             )}
+          </div>
+        )}
 
+        {/* --- CUSTOMER REVIEWS TAB --- */}
+        {adminTab === 'reviews' && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="bg-[#11131d]/90 backdrop-blur-md p-6 rounded-2xl border border-gray-800/80 shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <div className="flex items-center space-x-2 text-[#c5a059] text-xs font-semibold uppercase tracking-wider mb-1">
+                  <MessageSquare size={16} />
+                  <span>Customer Social Proof & Reviews</span>
+                </div>
+                <h3 className="text-xl md:text-2xl font-bold uppercase tracking-wider text-white">
+                  Customer Reviews Management ({reviews?.length || 0})
+                </h3>
+                <p className="text-xs text-gray-400 mt-1">
+                  Manage verified customer testimonials, star ratings, and buyer reviews shown on storefront.
+                </p>
+              </div>
+            </div>
+
+            {/* Existing Reviews List */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {reviews.map((rev) => (
+                <div key={rev.id} className="bg-[#121420] p-5 rounded-2xl border border-gray-800 space-y-3 relative group">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2.5">
+                      <img src={rev.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80'} alt={rev.name} className="w-8 h-8 rounded-full object-cover border border-[#c5a059]" />
+                      <div>
+                        <h4 className="font-bold text-white text-xs">{rev.name}</h4>
+                        <span className="text-[10px] text-gray-400">{rev.city}</span>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        if (confirm(`Delete review from ${rev.name}?`)) {
+                          deleteReview(rev.id);
+                        }
+                      }}
+                      className="p-1.5 bg-red-950/50 hover:bg-red-900 text-red-300 rounded-lg text-xs transition-colors"
+                      title="Delete Review"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+
+                  <div className="flex text-amber-400">
+                    {[...Array(rev.rating || 5)].map((_, i) => (
+                      <Star key={i} size={13} fill="currentColor" />
+                    ))}
+                  </div>
+
+                  <p className="text-xs text-gray-300 italic font-light">"{rev.review}"</p>
+
+                  <div className="pt-2 border-t border-gray-800 flex justify-between items-center text-[10px] text-gray-400">
+                    <span>Watch: <strong className="text-[#e5c158]">{rev.productName}</strong></span>
+                    <span className="text-emerald-400 font-bold">✓ Verified</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 

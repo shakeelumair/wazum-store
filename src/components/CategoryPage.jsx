@@ -23,7 +23,7 @@ const CategoryPage = () => {
           : 'Explore our complete collection of luxury products.',
         image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80'
       }
-    : (categories.find(c => c.name === selectedCategory) || {
+    : (categories.find(c => c.name.trim().toLowerCase() === selectedCategory.trim().toLowerCase()) || {
         name: selectedCategory,
         description: `Explore our premium collection of ${selectedCategory}.`,
         image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80'
@@ -31,7 +31,7 @@ const CategoryPage = () => {
 
   let categoryProducts = selectedCategory === 'All' 
     ? products 
-    : products.filter(p => p.category === selectedCategory);
+    : products.filter(p => p.category && p.category.trim().toLowerCase() === selectedCategory.trim().toLowerCase());
 
   if (searchQuery) {
     const q = searchQuery.toLowerCase().trim();

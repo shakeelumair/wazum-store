@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Menu, X, Shield, Store, ChevronDown, Truck } from 'lucide-react';
+import { Search, Menu, X, ChevronDown, Truck } from 'lucide-react';
 import { useStore } from '../context/StoreContext';
 
 const Header = () => {
@@ -12,7 +12,8 @@ const Header = () => {
     setCurrentView,
     searchQuery,
     setSearchQuery,
-    openCategoryPage
+    openCategoryPage,
+    siteConfig
   } = useStore();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -128,12 +129,12 @@ const Header = () => {
       {/* Center Logo (Perfectly aligned under top announcement bar) */}
       <div 
         onClick={() => { setCurrentView('store'); setSelectedCategory('All'); setSearchQuery(''); }}
-        className="cursor-pointer flex items-center justify-center bg-white/95 px-3 py-1 md:px-4 md:py-1.5 rounded-xl border-2 border-[#c5a059] shadow-lg shadow-[#c5a059]/20 hover:scale-105 transition-transform mx-2 lg:absolute lg:left-1/2 lg:-translate-x-1/2 z-10"
+        className="cursor-pointer flex items-center justify-center bg-white/95 px-2.5 py-0.5 md:px-3 md:py-1 rounded-lg border border-[#c5a059] shadow-md shadow-[#c5a059]/10 hover:scale-105 transition-transform mx-2 lg:absolute lg:left-1/2 lg:-translate-x-1/2 z-10"
       >
         <img 
           src={siteConfig?.logoUrl || '/logo.png'} 
           alt="Wazum Logo" 
-          className="h-9 md:h-12 w-auto object-contain max-w-[140px] md:max-w-[200px]"
+          className="h-7 md:h-9 w-auto object-contain max-w-[110px] md:max-w-[140px]"
         />
       </div>
 
@@ -192,29 +193,6 @@ const Header = () => {
           <Truck size={18} className="text-[#c5a059]" />
           <span className="hidden sm:inline font-light uppercase tracking-wider text-[11px]">Track Order</span>
         </button>
-
-        {/* Admin / Store View Switcher */}
-        <button 
-          onClick={() => setCurrentView(currentView === 'admin' ? 'store' : 'admin')}
-          className={`flex items-center space-x-1 px-2.5 py-1 md:px-3.5 md:py-1.5 rounded-full text-[11px] md:text-xs transition-all border cursor-pointer ${
-            currentView === 'admin' 
-              ? 'bg-[#c5a059] text-black border-[#c5a059] font-medium shadow-md' 
-              : 'bg-[#141414] text-[#e5c158] border-[#c5a059]/40 hover:bg-[#c5a059]/10'
-          }`}
-          title="Switch to Admin Panel"
-        >
-          {currentView === 'admin' ? (
-            <>
-              <Store size={14} />
-              <span>Store</span>
-            </>
-          ) : (
-            <>
-              <Shield size={14} />
-              <span>Admin</span>
-            </>
-          )}
-        </button>
       </div>
 
       {/* Mobile Overlay Menu */}
@@ -237,20 +215,13 @@ const Header = () => {
             </button>
           ))}
           
-          <div className="pt-2 space-y-2">
+          <div className="pt-2">
             <button 
               onClick={() => { setIsTrackOrderOpen(true); setIsMobileMenuOpen(false); }}
               className="w-full bg-[#181a2a] text-[#e5c158] border border-[#c5a059]/40 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider flex items-center justify-center space-x-2 shadow-md"
             >
               <Truck size={14} />
               <span>Track Order</span>
-            </button>
-            <button 
-              onClick={() => { setCurrentView('admin'); setIsMobileMenuOpen(false); }}
-              className="w-full bg-[#c5a059] text-black py-2 rounded-lg text-xs font-semibold uppercase tracking-wider flex items-center justify-center space-x-2 shadow-md hover:bg-[#b8952b]"
-            >
-              <Shield size={14} />
-              <span>Go to Admin Panel</span>
             </button>
           </div>
         </div>

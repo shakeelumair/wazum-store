@@ -7,7 +7,8 @@ const ProductGrid = () => {
   const { products, categories, selectedCategory, setSelectedCategory, searchQuery } = useStore();
 
   const filteredProducts = products.filter((product) => {
-    const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
+    const matchesCategory = selectedCategory === 'All' || 
+      (product.category && product.category.trim().toLowerCase() === selectedCategory.trim().toLowerCase());
     const matchesSearch = searchQuery === '' || 
       product.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
       product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
