@@ -90,8 +90,45 @@ export const StoreProvider = ({ children }) => {
     return [];
   });
 
-  // View state: 'store' or 'admin'
-  const [currentView, setCurrentView] = useState('store');
+  // View state: 'store', 'admin', 'superadmin', 'category'
+  const [currentView, setCurrentViewRaw] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname.toLowerCase();
+      if (path.includes('/admin')) return 'admin';
+      if (path.includes('/superadmin')) return 'superadmin';
+    }
+    return 'store';
+  });
+
+  const setCurrentView = (view) => {
+    setCurrentViewRaw(view);
+    if (typeof window !== 'undefined' && window.history && window.history.pushState) {
+      if (view === 'admin') {
+        window.history.pushState({}, '', '/admin');
+      } else if (view === 'superadmin') {
+        window.history.pushState({}, '', '/superadmin');
+      } else if (view === 'store') {
+        window.history.pushState({}, '', '/');
+      }
+    }
+  };
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname.toLowerCase();
+      if (path.includes('/admin')) {
+        setCurrentViewRaw('admin');
+      } else if (path.includes('/superadmin')) {
+        setCurrentViewRaw('superadmin');
+      } else {
+        setCurrentViewRaw('store');
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   const [adminTab, setAdminTab] = useState('overview'); // 'overview', 'categories', 'products', 'orders', 'looks', 'combos', 'settings'
   const [selectedCategory, setSelectedCategory] = useState('All');
 

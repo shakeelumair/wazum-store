@@ -53,12 +53,6 @@ const Footer = () => {
           >
             <span>📦 Track Order</span>
           </button>
-          <button 
-            onClick={() => setCurrentView('admin')} 
-            className="text-gray-300 hover:text-[#e5c158] transition-colors cursor-pointer uppercase font-light flex items-center space-x-1"
-          >
-            <span>🔒 Admin Panel</span>
-          </button>
         </div>
 
         {/* Customer Support Contact Badges */}
