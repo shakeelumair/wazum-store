@@ -153,16 +153,9 @@ const Footer = () => {
         {/* Divider */}
         <div className="w-24 h-[1px] bg-[#c5a059]/30"></div>
 
-        {/* Copyright & Admin Link */}
+        {/* Copyright */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-[11px] font-extralight text-gray-400 tracking-widest uppercase">
           <span>{siteConfig?.footerCopyright || '© 2026 WAZUM LUXURY STORE. ALL RIGHTS RESERVED.'}</span>
-          <span className="hidden sm:inline text-gray-600">|</span>
-          <button 
-            onClick={() => setCurrentView('admin')} 
-            className="text-[#c5a059] hover:text-white hover:underline transition-colors cursor-pointer font-medium"
-          >
-            🔒 Admin Portal
-          </button>
         </div>
 
       </div>
