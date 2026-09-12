@@ -498,6 +498,49 @@ export const StoreProvider = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [cartNotification, setCartNotification] = useState(null);
 
+  // Live MongoDB Atlas Data Synchronization Hooks
+  useEffect(() => {
+    // 1. Fetch live products from MongoDB Atlas
+    const fetchLiveProducts = async () => {
+      try {
+        const res = await fetch('/api/products');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            setProducts(data);
+            localStorage.setItem('wazum_products', JSON.stringify(data));
+          }
+        }
+      } catch (err) {
+        // Fallback to local storage if offline
+      }
+    };
+
+    fetchLiveProducts();
+  }, []);
+
+  // 2. Fetch live orders when viewing admin or on interval
+  useEffect(() => {
+    const fetchLiveOrders = async () => {
+      try {
+        const res = await fetch('/api/orders');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            setOrders(data);
+            localStorage.setItem('wazum_orders', JSON.stringify(data));
+          }
+        }
+      } catch (err) {}
+    };
+
+    if (currentView === 'admin' || currentView === 'superadmin') {
+      fetchLiveOrders();
+      const interval = setInterval(fetchLiveOrders, 30000); // 30s auto-refresh for incoming orders
+      return () => clearInterval(interval);
+    }
+  }, [currentView]);
+
   // Persist data in localStorage
   useEffect(() => {
     localStorage.setItem('wazum_categories', JSON.stringify(categories));
@@ -647,23 +690,36 @@ export const StoreProvider = ({ children }) => {
     setCategories(prev => prev.filter(c => c.id !== id));
   };
 
-  // Product CRUD
+  // Product CRUD (Synced with MongoDB Atlas)
   const addProduct = (productData) => {
     const newProd = {
       id: `prod-${Date.now()}`,
       inStock: true,
-      sizes: ['S', 'M', 'L', 'XL'],
+      sizes: ['Standard 42mm'],
       ...productData
     };
     setProducts(prev => [newProd, ...prev]);
+    fetch('/api/products', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newProd)
+    }).catch(err => console.error('MongoDB Atlas product sync error:', err));
   };
 
   const updateProduct = (id, updatedData) => {
     setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updatedData } : p));
+    fetch('/api/products', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, ...updatedData })
+    }).catch(err => console.error('MongoDB Atlas product update error:', err));
   };
 
   const deleteProduct = (id) => {
     setProducts(prev => prev.filter(p => p.id !== id));
+    fetch(`/api/products?id=${encodeURIComponent(id)}`, {
+      method: 'DELETE'
+    }).catch(err => console.error('MongoDB Atlas product delete error:', err));
   };
 
   const reorderProducts = (startIndex, endIndex) => {
@@ -671,31 +727,53 @@ export const StoreProvider = ({ children }) => {
       const result = Array.from(prev);
       const [removed] = result.splice(startIndex, 1);
       result.splice(endIndex, 0, removed);
+      fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(result)
+      }).catch(err => console.error('MongoDB Atlas bulk product sync error:', err));
       return result;
     });
   };
 
-  // Order helpers
+  // Order helpers (Synced with MongoDB Atlas)
   const placeOrder = (customerDetails) => {
     const newOrder = {
-      id: `ORD-${Date.now()}`,
+      id: `WZ-${Date.now().toString().slice(-6)}`,
       items: [...cart],
       total: cartTotal,
       customer: customerDetails,
       date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-      status: 'Pending'
+      status: 'Pending',
+      timestamp: new Date().toISOString()
     };
     setOrders(prev => [newOrder, ...prev]);
     clearCart();
+
+    // Persist live to MongoDB Atlas cloud database
+    fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newOrder)
+    }).catch(err => console.error('MongoDB Atlas order placement error:', err));
+
     return newOrder;
   };
 
   const updateOrderStatus = (orderId, newStatus) => {
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+    fetch('/api/orders', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: orderId, status: newStatus })
+    }).catch(err => console.error('MongoDB Atlas order status update error:', err));
   };
 
   const deleteOrder = (orderId) => {
     setOrders(prev => prev.filter(o => o.id !== orderId));
+    fetch(`/api/orders?id=${encodeURIComponent(orderId)}`, {
+      method: 'DELETE'
+    }).catch(err => console.error('MongoDB Atlas order delete error:', err));
   };
 
   const openCategoryPage = (categoryName) => {
