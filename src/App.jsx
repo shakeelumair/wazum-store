@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { StoreProvider, useStore } from './context/StoreContext';
 import AnnouncementBar from './components/AnnouncementBar';
 import Header from './components/Header';
@@ -10,11 +10,13 @@ import CartDrawer from './components/CartDrawer';
 import CheckoutModal from './components/CheckoutModal';
 import TrackOrderModal from './components/TrackOrderModal';
 import CartToast from './components/CartToast';
-import AdminPanel from './components/Admin/AdminPanel';
 import AdminLoginModal from './components/Admin/AdminLoginModal';
-import SuperAdminPanel from './components/Admin/SuperAdminPanel';
 import SuperAdminLoginModal from './components/Admin/SuperAdminLoginModal';
 import Footer from './components/Footer';
+
+// Code-splitting: Admin panels are completely excluded from the public customer bundle
+const AdminPanel = lazy(() => import('./components/Admin/AdminPanel'));
+const SuperAdminPanel = lazy(() => import('./components/Admin/SuperAdminPanel'));
 
 function MainApp() {
   const { currentView, isAdminAuthenticated, isSuperAdminAuthenticated } = useStore();
@@ -29,9 +31,21 @@ function MainApp() {
 
       {/* Main View Router */}
       {currentView === 'superadmin' ? (
-        isSuperAdminAuthenticated ? <SuperAdminPanel /> : <SuperAdminLoginModal />
+        isSuperAdminAuthenticated ? (
+          <Suspense fallback={<div className="min-h-screen bg-[#050608] flex items-center justify-center text-[#c5a059] text-xs font-mono tracking-widest uppercase">Unlocking Secure Vault...</div>}>
+            <SuperAdminPanel />
+          </Suspense>
+        ) : (
+          <SuperAdminLoginModal />
+        )
       ) : currentView === 'admin' ? (
-        isAdminAuthenticated ? <AdminPanel /> : <AdminLoginModal />
+        isAdminAuthenticated ? (
+          <Suspense fallback={<div className="min-h-screen bg-[#070707] flex items-center justify-center text-[#c5a059] text-xs font-mono tracking-widest uppercase">Connecting to Admin Portal...</div>}>
+            <AdminPanel />
+          </Suspense>
+        ) : (
+          <AdminLoginModal />
+        )
       ) : currentView === 'category' ? (
         <CategoryPage />
       ) : (
