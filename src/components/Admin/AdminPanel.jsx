@@ -55,7 +55,7 @@ const AdminPanel = () => {
 
   const [authForm, setAuthForm] = useState({
     username: adminAuth?.username || 'admin',
-    password: adminAuth?.password || 'admin123'
+    password: ''
   });
 
   useEffect(() => {
@@ -74,10 +74,10 @@ const AdminPanel = () => {
 
   useEffect(() => {
     if (adminAuth) {
-      setAuthForm({
-        username: adminAuth.username || 'admin',
-        password: adminAuth.password || 'admin123'
-      });
+      setAuthForm(prev => ({
+        ...prev,
+        username: adminAuth.username || 'admin'
+      }));
     }
   }, [adminAuth]);
 
@@ -2280,7 +2280,7 @@ const AdminPanel = () => {
                         type="text"
                         value={authForm.username}
                         onChange={(e) => setAuthForm({ ...authForm, username: e.target.value })}
-                        placeholder="Default: admin"
+                        placeholder="Admin Username"
                         className="w-full bg-[#181a2a] border border-gray-800 rounded-xl p-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#c5a059] transition-colors font-mono"
                       />
                     </div>
@@ -2288,13 +2288,13 @@ const AdminPanel = () => {
                     {/* Admin Password */}
                     <div>
                       <label className="block text-xs uppercase font-bold text-gray-300 mb-1.5">
-                        Admin Password *
+                        New Admin Password
                       </label>
                       <input
-                        type="text"
+                        type="password"
                         value={authForm.password}
                         onChange={(e) => setAuthForm({ ...authForm, password: e.target.value })}
-                        placeholder="Default: admin123"
+                        placeholder="Leave blank to keep current password"
                         className="w-full bg-[#181a2a] border border-gray-800 rounded-xl p-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#c5a059] transition-colors font-mono"
                       />
                     </div>
@@ -2302,18 +2302,19 @@ const AdminPanel = () => {
 
                   <div className="pt-3 flex items-center justify-between">
                     <p className="text-[11px] text-gray-400">
-                      🔒 Change Admin login ID and password here.
+                      🔒 Change Admin login ID and password securely.
                     </p>
                     <button
                       type="button"
-                      onClick={() => {
-                        if (!authForm.username.trim() || !authForm.password.trim()) {
-                          setToast({ type: 'error', message: 'Admin ID and Password cannot be empty!' });
+                      onClick={async () => {
+                        if (!authForm.username.trim()) {
+                          setToast({ type: 'error', message: 'Admin ID cannot be empty!' });
                           setTimeout(() => setToast(null), 3000);
                           return;
                         }
-                        updateAdminAuth(authForm);
-                        setToast({ type: 'success', message: '✓ Admin Username & Password updated successfully!' });
+                        await updateAdminAuth(authForm);
+                        setToast({ type: 'success', message: '✓ Admin Username & Password updated securely!' });
+                        setAuthForm(prev => ({ ...prev, password: '' }));
                         setTimeout(() => setToast(null), 3000);
                       }}
                       className="bg-[#181a2a] border border-[#c5a059] text-[#e5c158] hover:bg-[#c5a059] hover:text-black font-bold text-xs uppercase tracking-widest px-5 py-2.5 rounded-xl shadow-md transition-all flex items-center space-x-2 cursor-pointer"

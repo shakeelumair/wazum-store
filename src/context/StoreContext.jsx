@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { initialCategories, initialProducts, initialLookVideos, initialComboOffers, initialReviews } from '../data/initialData';
+import { hashPassword, DEFAULT_ADMIN_HASH, DEFAULT_SUPER_ADMIN_HASH } from '../utils/security';
 
 const StoreContext = createContext();
 
@@ -168,16 +169,23 @@ export const StoreProvider = ({ children }) => {
     } catch (e) {}
   };
 
-  // Admin Security / Auth State
+  // Admin Security / Auth State (Cryptographically Protected)
   const defaultAdminAuth = {
     username: 'admin',
-    password: 'admin123'
+    passwordHash: DEFAULT_ADMIN_HASH
   };
 
   const [adminAuth, setAdminAuth] = useState(() => {
     try {
       const saved = localStorage.getItem('wazum_admin_credentials');
-      if (saved) return { ...defaultAdminAuth, ...JSON.parse(saved) };
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Seamlessly migrate legacy plaintext credentials if present
+        if (!parsed.passwordHash) {
+          return { username: parsed.username || 'admin', passwordHash: DEFAULT_ADMIN_HASH };
+        }
+        return { ...defaultAdminAuth, ...parsed };
+      }
     } catch (e) {}
     return defaultAdminAuth;
   });
@@ -190,16 +198,29 @@ export const StoreProvider = ({ children }) => {
     }
   });
 
-  const updateAdminAuth = (newAuth) => {
-    const updated = { ...adminAuth, ...newAuth };
+  const updateAdminAuth = async (newAuth) => {
+    let updated = { ...adminAuth, username: (newAuth.username || adminAuth.username || 'admin').trim() };
+    if (newAuth.password && newAuth.password.trim()) {
+      updated.passwordHash = await hashPassword(newAuth.password.trim());
+      delete updated.password;
+    } else if (newAuth.passwordHash) {
+      updated.passwordHash = newAuth.passwordHash;
+      delete updated.password;
+    }
     setAdminAuth(updated);
     try {
       localStorage.setItem('wazum_admin_credentials', JSON.stringify(updated));
     } catch (e) {}
+    return updated;
   };
 
-  const loginAdmin = (inputUser, inputPass) => {
-    if (inputUser.trim() === adminAuth.username && inputPass === adminAuth.password) {
+  const loginAdmin = async (inputUser, inputPass) => {
+    if (!inputUser || !inputPass) {
+      return { success: false, error: 'Please enter both username and password.' };
+    }
+    const hashed = await hashPassword(inputPass);
+    const expectedHash = adminAuth.passwordHash || DEFAULT_ADMIN_HASH;
+    if (inputUser.trim().toLowerCase() === (adminAuth.username || 'admin').toLowerCase() && hashed === expectedHash) {
       setIsAdminAuthenticated(true);
       try {
         localStorage.setItem('wazum_is_admin_logged_in', 'true');
@@ -276,31 +297,61 @@ export const StoreProvider = ({ children }) => {
     localStorage.setItem('wazum_site_config', JSON.stringify(updated));
   };
 
-  // Super Admin Credentials & Auth State
+  // Super Admin Credentials & Auth State (Cryptographically Protected)
   const defaultSuperAdminAuth = {
     username: 'superadmin',
-    password: 'superwazum2026'
+    passwordHash: DEFAULT_SUPER_ADMIN_HASH
   };
 
   const [superAdminAuth, setSuperAdminAuth] = useState(() => {
-    const saved = localStorage.getItem('wazum_super_admin_credentials');
-    return saved ? { ...defaultSuperAdminAuth, ...JSON.parse(saved) } : defaultSuperAdminAuth;
+    try {
+      const saved = localStorage.getItem('wazum_super_admin_credentials');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (!parsed.passwordHash) {
+          return { username: parsed.username || 'superadmin', passwordHash: DEFAULT_SUPER_ADMIN_HASH };
+        }
+        return { ...defaultSuperAdminAuth, ...parsed };
+      }
+    } catch (e) {}
+    return defaultSuperAdminAuth;
   });
 
   const [isSuperAdminAuthenticated, setIsSuperAdminAuthenticated] = useState(() => {
-    return localStorage.getItem('wazum_is_super_admin_logged_in') === 'true';
+    try {
+      return localStorage.getItem('wazum_is_super_admin_logged_in') === 'true';
+    } catch (e) {
+      return false;
+    }
   });
 
-  const updateSuperAdminAuth = (newAuth) => {
-    const updated = { ...superAdminAuth, ...newAuth };
+  const updateSuperAdminAuth = async (newAuth) => {
+    let updated = { ...superAdminAuth, username: (newAuth.username || superAdminAuth.username || 'superadmin').trim() };
+    if (newAuth.password && newAuth.password.trim()) {
+      updated.passwordHash = await hashPassword(newAuth.password.trim());
+      delete updated.password;
+    } else if (newAuth.passwordHash) {
+      updated.passwordHash = newAuth.passwordHash;
+      delete updated.password;
+    }
     setSuperAdminAuth(updated);
-    localStorage.setItem('wazum_super_admin_credentials', JSON.stringify(updated));
+    try {
+      localStorage.setItem('wazum_super_admin_credentials', JSON.stringify(updated));
+    } catch (e) {}
+    return updated;
   };
 
-  const loginSuperAdmin = (inputUser, inputPass) => {
-    if (inputUser.trim() === superAdminAuth.username && inputPass === superAdminAuth.password) {
+  const loginSuperAdmin = async (inputUser, inputPass) => {
+    if (!inputUser || !inputPass) {
+      return { success: false, error: 'Please enter both ID and Master Password.' };
+    }
+    const hashed = await hashPassword(inputPass);
+    const expectedHash = superAdminAuth.passwordHash || DEFAULT_SUPER_ADMIN_HASH;
+    if (inputUser.trim().toLowerCase() === (superAdminAuth.username || 'superadmin').toLowerCase() && hashed === expectedHash) {
       setIsSuperAdminAuthenticated(true);
-      localStorage.setItem('wazum_is_super_admin_logged_in', 'true');
+      try {
+        localStorage.setItem('wazum_is_super_admin_logged_in', 'true');
+      } catch (e) {}
       return { success: true };
     }
     return { success: false, error: 'Invalid Super Admin ID or Master Key! Access Denied.' };

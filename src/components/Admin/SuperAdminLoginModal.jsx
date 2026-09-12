@@ -10,18 +10,21 @@ const SuperAdminLoginModal = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    setTimeout(() => {
-      const result = loginSuperAdmin(username, password);
+    try {
+      const result = await loginSuperAdmin(username, password);
       setLoading(false);
       if (!result.success) {
         setError(result.error);
       }
-    }, 400);
+    } catch (err) {
+      setLoading(false);
+      setError('Authentication error occurred. Please try again.');
+    }
   };
 
   return (

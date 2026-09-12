@@ -5,6 +5,7 @@ import {
   Layout, Image as ImageIcon, Sliders, ToggleLeft, ToggleRight, Sparkles,
   ArrowLeft, Check, AlertCircle, FileJson, Layers, Package, ShoppingBag, Truck
 } from 'lucide-react';
+import { DEFAULT_ADMIN_HASH } from '../../utils/security';
 
 const SuperAdminPanel = () => {
   const {
@@ -28,8 +29,8 @@ const SuperAdminPanel = () => {
 
   const [activeTab, setActiveTab] = useState('brand'); // 'brand', 'hero', 'sections', 'shipping', 'social', 'security', 'backup'
   const [configForm, setConfigForm] = useState({ ...siteConfig });
-  const [clientForm, setClientForm] = useState({ ...adminAuth });
-  const [superForm, setSuperForm] = useState({ ...superAdminAuth });
+  const [clientForm, setClientForm] = useState({ username: adminAuth?.username || 'admin', password: '' });
+  const [superForm, setSuperForm] = useState({ username: superAdminAuth?.username || 'superadmin', password: '' });
   const [toast, setToast] = useState(null);
 
   const showToast = (msg, type = 'success') => {
@@ -42,29 +43,31 @@ const SuperAdminPanel = () => {
     showToast('✓ Store visual & text configuration saved live across website!');
   };
 
-  const handleSaveClientAuth = () => {
-    if (!clientForm.username.trim() || !clientForm.password.trim()) {
-      showToast('Client Username & Password cannot be empty!', 'error');
+  const handleSaveClientAuth = async () => {
+    if (!clientForm.username.trim()) {
+      showToast('Client Username cannot be empty!', 'error');
       return;
     }
-    updateAdminAuth(clientForm);
-    showToast('✓ Client Admin login credentials updated!');
+    await updateAdminAuth(clientForm);
+    showToast('✓ Client Admin login credentials updated securely!');
+    setClientForm(prev => ({ ...prev, password: '' }));
   };
 
-  const handleResetClientAuth = () => {
-    const defaultAuth = { username: 'admin', password: 'admin123' };
-    setClientForm(defaultAuth);
-    updateAdminAuth(defaultAuth);
-    showToast('✓ Client Admin password & ID reset to default (admin / admin123)!');
+  const handleResetClientAuth = async () => {
+    const defaultAuth = { username: 'admin', passwordHash: DEFAULT_ADMIN_HASH };
+    setClientForm({ username: 'admin', password: '' });
+    await updateAdminAuth(defaultAuth);
+    showToast('✓ Client Admin password & ID reset to default securely!');
   };
 
-  const handleSaveSuperAuth = () => {
-    if (!superForm.username.trim() || !superForm.password.trim()) {
-      showToast('Super Admin Master ID and Password cannot be empty!', 'error');
+  const handleSaveSuperAuth = async () => {
+    if (!superForm.username.trim()) {
+      showToast('Super Admin Master ID cannot be empty!', 'error');
       return;
     }
-    updateSuperAdminAuth(superForm);
-    showToast('✓ Super Admin Master Key updated!');
+    await updateSuperAdminAuth(superForm);
+    showToast('✓ Super Admin Master Key updated securely!');
+    setSuperForm(prev => ({ ...prev, password: '' }));
   };
 
   // Export Complete Backup JSON
@@ -552,11 +555,12 @@ const SuperAdminPanel = () => {
 
                 <div>
                   <label className="block text-xs uppercase font-bold text-gray-300 mb-1">
-                    Client Admin Password *
+                    New Client Admin Password
                   </label>
                   <input
-                    type="text"
+                    type="password"
                     value={clientForm.password}
+                    placeholder="Leave blank to keep unchanged"
                     onChange={(e) => setClientForm({ ...clientForm, password: e.target.value })}
                     className="w-full bg-[#11131d] border border-gray-700 rounded-xl p-3 text-xs text-white font-mono focus:outline-none focus:border-[#c5a059]"
                   />
@@ -570,7 +574,7 @@ const SuperAdminPanel = () => {
                   className="w-full sm:w-auto bg-amber-950/80 hover:bg-amber-900 border border-amber-600/60 text-amber-200 font-bold text-xs uppercase tracking-widest px-4 py-2.5 rounded-xl transition-all cursor-pointer flex items-center justify-center space-x-1.5"
                 >
                   <RefreshCw size={14} className="text-amber-400" />
-                  <span>⚡ 1-Click Reset Client Password (admin / admin123)</span>
+                  <span>⚡ 1-Click Reset Client Password to Default</span>
                 </button>
 
                 <button
@@ -605,11 +609,12 @@ const SuperAdminPanel = () => {
 
                 <div>
                   <label className="block text-xs uppercase font-bold text-gray-300 mb-1">
-                    Super Admin Master Password *
+                    New Super Admin Master Password
                   </label>
                   <input
-                    type="text"
+                    type="password"
                     value={superForm.password}
+                    placeholder="Leave blank to keep unchanged"
                     onChange={(e) => setSuperForm({ ...superForm, password: e.target.value })}
                     className="w-full bg-[#11131d] border border-gray-700 rounded-xl p-3 text-xs text-white font-mono focus:outline-none focus:border-[#c5a059]"
                   />

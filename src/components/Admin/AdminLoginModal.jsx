@@ -10,14 +10,14 @@ const AdminLoginModal = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    setTimeout(() => {
+    try {
       // 1. Secret Super Admin Master Check
-      const superResult = loginSuperAdmin(username, password);
+      const superResult = await loginSuperAdmin(username, password);
       if (superResult.success) {
         setLoading(false);
         setCurrentView('superadmin');
@@ -25,7 +25,7 @@ const AdminLoginModal = () => {
       }
 
       // 2. Client Admin Check
-      const clientResult = loginAdmin(username, password);
+      const clientResult = await loginAdmin(username, password);
       setLoading(false);
       if (clientResult.success) {
         setCurrentView('admin');
@@ -33,7 +33,10 @@ const AdminLoginModal = () => {
       }
 
       setError('Invalid Admin ID or Password! Please try again.');
-    }, 400);
+    } catch (err) {
+      setLoading(false);
+      setError('Authentication error occurred. Please try again.');
+    }
   };
 
   return (
@@ -86,7 +89,7 @@ const AdminLoginModal = () => {
               <input
                 type="text"
                 required
-                placeholder="Enter Admin ID (e.g. admin)"
+                placeholder="Enter Admin ID"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full bg-[#181a2a] border border-gray-700 focus:border-[#c5a059] text-white text-sm rounded-xl py-3 pl-11 pr-4 placeholder-gray-500 focus:outline-none transition-colors"
